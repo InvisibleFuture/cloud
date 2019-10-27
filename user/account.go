@@ -27,17 +27,17 @@ type Account struct {
 
 func init(){
 	var err error
-	DB_ACCOUNT, err = leveldb.OpenFile("data/account", nil)
-	if err != nil { panic("OpenFile error data/account") }
+	DB_ACCOUNT, err = leveldb.OpenFile("data/user/account", nil)
+	if err != nil { panic("OpenFile error data/user/account") }
 
-	DB_PASSWORD, err = leveldb.OpenFile("data/password", nil)
-	if err != nil { panic("OpenFile error data/password") }
+	DB_PASSWORD, err = leveldb.OpenFile("data/user/password", nil)
+	if err != nil { panic("OpenFile error data/user/password") }
 
-	DB_SALT, err = leveldb.OpenFile("data/salt", nil)
-	if err != nil { panic("OpenFile error data/salt") }
+	DB_SALT, err = leveldb.OpenFile("data/user/salt", nil)
+	if err != nil { panic("OpenFile error data/user/salt") }
 
-	DB_TOKEN, err = leveldb.OpenFile("data/token", nil)
-	if err != nil { panic("OpenFile error data/token") }
+	DB_TOKEN, err = leveldb.OpenFile("data/user/token", nil)
+	if err != nil { panic("OpenFile error data/user/token") }
 
 	CH_USERID = make(chan int64)
 
@@ -66,6 +66,10 @@ func init(){
 			if err != nil { panic("counter error") }
 		}
 	}(CH_USERID)
+
+	// 存储一个测试账户
+	//DB_ACCOUNT.Put([]byte("Last"), []byte("1"), nil)
+	//DB_PASSWORD.Put([]byte("1"), []byte("00000000"), nil)
 }
 
 func (a *Account)Register(account, password string) bool {
@@ -80,7 +84,8 @@ func (a *Account)Register(account, password string) bool {
 }
 
 func (a *Account)Signin(account, password string) bool {
-	// 验证账号密码长度格式是否合法
+	// 验证账号密码长度格式是否合法 尤其不能为空
+	if account == "" || password == "" { return false }
 	id, err := DB_ACCOUNT.Get([]byte(account), nil)
 	if err != nil { return false }
 	pw, err := DB_PASSWORD.Get(id, nil)

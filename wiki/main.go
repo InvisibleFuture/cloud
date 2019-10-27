@@ -1,31 +1,49 @@
 package wiki
 
 import (
-	//"net/http"
+	"net/http"
+)
+import (
+	"log"
+	"sync"
+	"strconv"
+	"math/rand"
+	"encoding/binary"
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
-func CreateProject(w http.ResponseWriter, r *http.Request) {
-	//var u := User{
-	//	id: r.FromValue("id")
-	//	token: r.FromValue("token")
-	//}
-	// 要实现身份验证需要先实现登录
+var (
+	DB_LIST  *leveldb.DB
+	DB_DOC   *leveldb.DB
+	DB_SALT     *leveldb.DB
+	DB_TOKEN    *leveldb.DB
 
+	CA_TOKEN    sync.Map
 
-	//get token(id)
-	//if token != u.token {
-	//	return
-	//}
-	// 并验证用户身份(应通过中间件实现)
+	CH_USERID chan int64
+)
 
+func init() {
+	var err error
+	DB_ACCOUNT, err = leveldb.OpenFile("data/wiki/list", nil)
+	if err != nil { panic("OpenFile error data/wiki/list") }
+
+	DB_PASSWORD, err = leveldb.OpenFile("data/wiki/password", nil)
+	if err != nil { panic("OpenFile error data/wiki/password") }
+
+	DB_SALT, err = leveldb.OpenFile("data/wiki/salt", nil)
+	if err != nil { panic("OpenFile error data/wiki/salt") }
+
+	DB_TOKEN, err = leveldb.OpenFile("data/wiki/token", nil)
+	if err != nil { panic("OpenFile error data/wiki/token") }
+}
+
+func WikiCreate(w http.ResponseWriter, r *http.Request) {
 	// 验证操作权限
 	//get project(id)
 	//if project(u.id) != true {
 	//	return
 	//}
-
-	//var p Project
-	// 验证用户操作对象的权限?
 
 	// 决定是否执行操作
 	//ok := u.CreateProject(p)
