@@ -23,19 +23,24 @@ func init() {
 	//CA = make(map[string]*sync.Map)
 	CH = make(map[string]chan int64)
 
-	dbList := []string{"account", "password", "salt", "token", "counter", "user", "project"}
+	// 将 ID 0 作为计数器存储列, 不必再初始化一个单独的存储库
+	dbList := []string{"counter"}
 	for _, name := range dbList {
 		DB[name], err = leveldb.OpenFile("data/"+name, nil)
-		if err != nil {
-			panic("OpenFile error")
-		}
+		if err != nil { panic("OpenFile error") }
 	}
 
-	// init cache
-	//caList := []string{"token"}
-	//for _, name := range caList {
-	//	CA[name] = make(map[string]string)
-	//}
+	user := []string{"account", "password", "salt", "token"}
+	for _, name := range user {
+		DB[name], err = leveldb.OpenFile("data/"+name, nil)
+		if err != nil { panic("OpenFile error") }
+	}
+
+	wiki := []string{"list", "index", "doc"}
+	for _, name := range wiki {
+		DB[name], err = leveldb.OpenFile("data/"+name, nil)
+		if err != nil { panic("OpenFile error") }
+	}
 
 	chList := []string{"user", "project"}
 	for _, name := range chList {
@@ -45,8 +50,7 @@ func init() {
 			var sum int64
 
 			buf := make([]byte, 8)
-
-			data, err := DB["counter"].Get([]byte(name), nil)
+			data, err := DB[name].Get([]byte("0"), nil)
 			if err != nil {
 				binary.BigEndian.PutUint64(buf, uint64(sum))
 				err = DB["counter"].Put([]byte(name), buf, nil)

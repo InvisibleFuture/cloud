@@ -12,6 +12,7 @@
       <w>syscall</w>
       <w>uint</w>
       <w>userid</w>
+      <w>wikilist</w>
     </words>
   </dictionary>
 </component>
