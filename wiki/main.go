@@ -24,6 +24,7 @@ var (
 )
 
 func init() {
+	/*
 	var err error
 	DB_ACCOUNT, err = leveldb.OpenFile("data/wiki/list", nil)
 	if err != nil { panic("OpenFile error data/wiki/list") }
@@ -36,6 +37,7 @@ func init() {
 
 	DB_TOKEN, err = leveldb.OpenFile("data/wiki/token", nil)
 	if err != nil { panic("OpenFile error data/wiki/token") }
+	*/
 }
 
 func WikiCreate(w http.ResponseWriter, r *http.Request) {
